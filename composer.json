@@ -2,7 +2,7 @@
     "name": "szabogyula/simplesamlphp-module-attributelimit",
     "description": "",
     "type": "simplesamlphp-module",
-    "license": "LGPL-2.1-or-later",git s
+    "license": "LGPL-2.1-or-later",
     "require": {
         "simplesamlphp/composer-module-installer": "^1.1"
     },

@@ -1,4 +1,7 @@
 <?php
+namespace SimpleSAML\Module\niif\Auth\Process;
+
+use SimpleSAML\Error\Exception;
 
 /**
  * A filter for limiting which attributes are passed on.
@@ -7,9 +10,10 @@
  * @author Kristóf Bajnok, NIIF
  * @author Tamás Frank, NIIF
  * @author Gyula Szabó, NIIF
+ * @author Gyula Szabó, SZTAKI
  * @package SimpleSAMLphp
  */
-class sspmod_niif_Auth_Process_AttributeLimit extends SimpleSAML_Auth_ProcessingFilter {
+class AttributeLimit extends SimpleSAML_Auth_ProcessingFilter {
 
     /**
      * List of attributes which this filter will allow through.
@@ -39,7 +43,7 @@ class sspmod_niif_Auth_Process_AttributeLimit extends SimpleSAML_Auth_Processing
      *
      * @param array $config  Configuration information about this filter.
      * @param mixed $reserved  For future use
-     * @throws SimpleSAML_Error_Exception If invalid configuration is found.
+     * @throws Exception If invalid configuration is found.
      */
     public function __construct($config, $reserved)
     {
@@ -52,38 +56,38 @@ class sspmod_niif_Auth_Process_AttributeLimit extends SimpleSAML_Auth_Processing
                 $this->isDefault = (bool)$value;
             } elseif (is_int($index)) {
                 if (!is_string($value)) {
-                    throw new SimpleSAML_Error_Exception('AttributeLimit: Invalid attribute name: ' .
+                    throw new Exception('AttributeLimit: Invalid attribute name: ' .
                         var_export($value, true));
                 }
                 $this->allowedAttributes[] = $value;
             } elseif ($index === 'bilateralSPs') {
                 if (! is_array($value)) {
-                    throw new SimpleSAML_Error_Exception('AttributeLimit: Invalid option bilateralSPs: must be specified in an array: ' . var_export($index, true));
+                    throw new Exception('AttributeLimit: Invalid option bilateralSPs: must be specified in an array: ' . var_export($index, true));
                 }
                 foreach ($value as $valuearray) {
                     if (! is_array($valuearray)) {
-                        throw new SimpleSAML_Error_Exception('AttributeLimit: An invalid value in option bilateralSPs: must be specified in an array: ' . var_export($value, true));
+                        throw new Exception('AttributeLimit: An invalid value in option bilateralSPs: must be specified in an array: ' . var_export($value, true));
                     }
                 }
                 $this->bilateralSPs = $value;
             } elseif ($index === 'bilateralAttributes') {
                 if (! is_array($value)) {
-                    throw new SimpleSAML_Error_Exception('AttributeLimit: Invalid option bilateralAttributes: must be specified in an array: ' . var_export($index, true));
+                    throw new Exception('AttributeLimit: Invalid option bilateralAttributes: must be specified in an array: ' . var_export($index, true));
                 }
                 foreach ($value as $valuearray) {
                     if (! is_array($valuearray)) {
-                        throw new SimpleSAML_Error_Exception('AttributeLimit: An invalid value in option bilateralAttributes: must be specified in an array: ' . var_export($value, true));
+                        throw new Exception('AttributeLimit: An invalid value in option bilateralAttributes: must be specified in an array: ' . var_export($value, true));
                     }
                 }
                 $this->bilateralAttributes = $value;
             } elseif (is_string($index)) {
                 if (!is_array($value)) {
-                    throw new SimpleSAML_Error_Exception('AttributeLimit: Values for ' . var_export($index, true) .
+                    throw new Exception('AttributeLimit: Values for ' . var_export($index, true) .
                         ' must be specified in an array.');
                 }
                 $this->allowedAttributes[$index] = $value;
             } else {
-                throw new SimpleSAML_Error_Exception('AttributeLimit: Invalid option: ' . var_export($index, true));
+                throw new Exception('AttributeLimit: Invalid option: ' . var_export($index, true));
             }
         }
     }
@@ -116,7 +120,7 @@ class sspmod_niif_Auth_Process_AttributeLimit extends SimpleSAML_Auth_Processing
      * Removes all attributes which aren't one of the allowed attributes.
      *
      * @param array &$request  The current request
-     * @throws SimpleSAML_Error_Exception If invalid configuration is found.
+     * @throws Exception If invalid configuration is found.
      */
     public function process(&$request)
     {
@@ -149,7 +153,7 @@ class sspmod_niif_Auth_Process_AttributeLimit extends SimpleSAML_Auth_Processing
                 if (array_key_exists($name, $allowedAttributes)) {
                     // but it is an index of the array
                     if (!is_array($allowedAttributes[$name])) {
-                        throw new SimpleSAML_Error_Exception('AttributeLimit: Values for ' . var_export($name, true) .
+                        throw new Exception('AttributeLimit: Values for ' . var_export($name, true) .
                             ' must be specified in an array.');
                     }
                     $attributes[$name] = array_intersect($attributes[$name], $allowedAttributes[$name]);

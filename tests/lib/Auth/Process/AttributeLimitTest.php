@@ -1,4 +1,5 @@
 <?php
+use SimpleSAML\Module\niif\Auth\Process\AttributeLimit;
 
 class Test_sspmod_niif_Auth_Process_AttributeLimit extends PHPUnit_Framework_TestCase
 {
@@ -12,7 +13,7 @@ class Test_sspmod_niif_Auth_Process_AttributeLimit extends PHPUnit_Framework_Tes
      */
     private static function processFilter(array $config, array $request)
     {
-        $filter = new sspmod_niif_Auth_Process_AttributeLimit($config, null);
+        $filter = new AttributeLimit($config, null);
         $filter->process($request);
         return $request;
     }

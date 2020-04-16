@@ -2,14 +2,22 @@
     "name": "szabogyula/simplesamlphp-module-attributelimit",
     "description": "",
     "type": "simplesamlphp-module",
+    "license": "LGPL-2.1-or-later",
     "require": {
         "simplesamlphp/composer-module-installer": "^1.1"
     },
-	"require-dev": {
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\niif\\": "lib/"
+        }
+    },
+    "require-dev": {
         "simplesamlphp/simplesamlphp": "1.18",
         "phpunit/phpunit": "~3.7"
     },
     "autoload-dev": {
-      "files": ["tests/_autoload_modules.php"]
-    }    
+        "files": [
+            "tests/_autoload_modules.php"
+        ]
+    }
 }

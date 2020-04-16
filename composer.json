@@ -1,12 +1,12 @@
 {
-    "name": "niif/simplesamlphp-module-attributelimit",
+    "name": "szabogyula/simplesamlphp-module-attributelimit",
     "description": "",
     "type": "simplesamlphp-module",
     "require": {
         "simplesamlphp/composer-module-installer": "^1.1"
     },
 	"require-dev": {
-        "simplesamlphp/simplesamlphp": "1.14",
+        "simplesamlphp/simplesamlphp": "1.18",
         "phpunit/phpunit": "~3.7"
     },
     "autoload-dev": {

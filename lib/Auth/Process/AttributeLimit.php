@@ -13,7 +13,7 @@ use SimpleSAML\Error\Exception;
  * @author Gyula Szabó, SZTAKI
  * @package SimpleSAMLphp
  */
-class AttributeLimit extends SimpleSAML_Auth_ProcessingFilter {
+class AttributeLimit extends \SimpleSAML\Auth\ProcessingFilter {
 
     /**
      * List of attributes which this filter will allow through.

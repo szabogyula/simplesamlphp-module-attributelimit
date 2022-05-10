@@ -10,11 +10,6 @@
         "simplesamlphp/simplesamlphp": "~1.19",
         "phpunit/phpunit": "~3.7"
     },
-    "autoload": {
-        "psr-4": {
-            "SimpleSAML\\Module\\szabogyula\\": "lib/"
-        }
-    },
     "autoload-dev": {
         "files": [
             "tests/_autoload_modules.php"

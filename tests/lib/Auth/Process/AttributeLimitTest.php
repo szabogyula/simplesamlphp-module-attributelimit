@@ -1,7 +1,7 @@
 <?php
-use SimpleSAML\Module\niif\Auth\Process\AttributeLimit;
+use SimpleSAML\Module\szabogyula\Auth\Process\AttributeLimit;
 
-class Test_sspmod_niif_Auth_Process_AttributeLimit extends PHPUnit_Framework_TestCase
+class Test_sspmod_szabogyula_Auth_Process_AttributeLimit extends PHPUnit_Framework_TestCase
 {
 
     /**

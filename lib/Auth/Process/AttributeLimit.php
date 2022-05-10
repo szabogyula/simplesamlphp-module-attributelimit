@@ -1,5 +1,5 @@
 <?php
-namespace SimpleSAML\Module\niif\Auth\Process;
+namespace SimpleSAML\Module\szabogyula\Auth\Process;
 
 use SimpleSAML\Error\Exception;
 

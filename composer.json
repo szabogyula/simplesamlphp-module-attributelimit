@@ -6,11 +6,6 @@
     "require": {
         "simplesamlphp/composer-module-installer": "^1.1"
     },
-    "autoload": {
-        "psr-4": {
-            "SimpleSAML\\Module\\niif\\": "lib/"
-        }
-    },
     "require-dev": {
         "simplesamlphp/simplesamlphp": "1.18",
         "phpunit/phpunit": "~3.7"

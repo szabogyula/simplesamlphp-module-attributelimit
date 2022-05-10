@@ -7,8 +7,13 @@
         "simplesamlphp/composer-module-installer": "^1.1"
     },
     "require-dev": {
-        "simplesamlphp/simplesamlphp": "1.18",
+        "simplesamlphp/simplesamlphp": "~1.19",
         "phpunit/phpunit": "~3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\szabogyula\\": "lib/"
+        }
     },
     "autoload-dev": {
         "files": [

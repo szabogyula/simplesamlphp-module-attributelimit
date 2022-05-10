@@ -1,5 +1,5 @@
 <?php
-namespace SimpleSAML\Module\szabogyula\Auth\Process;
+namespace SimpleSAML\Module\attributelimit\Auth\Process;
 
 use SimpleSAML\Error\Exception;
 

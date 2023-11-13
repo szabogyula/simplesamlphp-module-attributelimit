@@ -2,6 +2,7 @@
 namespace SimpleSAML\Module\attributelimit\Auth\Process;
 
 use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
 
 /**
  * A filter for limiting which attributes are passed on.
@@ -18,17 +19,17 @@ class AttributeLimit extends \SimpleSAML\Auth\ProcessingFilter {
     /**
      * List of attributes which this filter will allow through.
      */
-    private $allowedAttributes = array();
+    private $allowedAttributes = [];
 
     /**
      * Array of sp attributes arrays which this filter will allow through.
      */
-    private $bilateralSPs = array();
+    private $bilateralSPs = [];
     
     /**
      * Array of attribute sps arrays which this filter will allow through.
      */
-    private $bilateralAttributes = array();
+    private $bilateralAttributes = [];
 
     /**
      * Whether the 'attributes' option in the metadata takes precedence.
@@ -57,39 +58,40 @@ class AttributeLimit extends \SimpleSAML\Auth\ProcessingFilter {
             } elseif (is_int($index)) {
                 if (!is_string($value)) {
                     throw new Exception('AttributeLimit: Invalid attribute name: ' .
-                        var_export($value, true));
+                        json_encode($value));
                 }
                 $this->allowedAttributes[] = $value;
             } elseif ($index === 'bilateralSPs') {
                 if (! is_array($value)) {
-                    throw new Exception('AttributeLimit: Invalid option bilateralSPs: must be specified in an array: ' . var_export($index, true));
+                    throw new Exception('AttributeLimit: Invalid option bilateralSPs: must be specified in an array: ' . json_encode($index));
                 }
                 foreach ($value as $valuearray) {
                     if (! is_array($valuearray)) {
-                        throw new Exception('AttributeLimit: An invalid value in option bilateralSPs: must be specified in an array: ' . var_export($value, true));
+                        throw new Exception('AttributeLimit: An invalid value in option bilateralSPs: must be specified in an array: ' . json_encode($value));
                     }
                 }
                 $this->bilateralSPs = $value;
             } elseif ($index === 'bilateralAttributes') {
                 if (! is_array($value)) {
-                    throw new Exception('AttributeLimit: Invalid option bilateralAttributes: must be specified in an array: ' . var_export($index, true));
+                    throw new Exception('AttributeLimit: Invalid option bilateralAttributes: must be specified in an array: ' . json_encode($index));
                 }
                 foreach ($value as $valuearray) {
                     if (! is_array($valuearray)) {
-                        throw new Exception('AttributeLimit: An invalid value in option bilateralAttributes: must be specified in an array: ' . var_export($value, true));
+                        throw new Exception('AttributeLimit: An invalid value in option bilateralAttributes: must be specified in an array: ' . json_encode($value));
                     }
                 }
                 $this->bilateralAttributes = $value;
             } elseif (is_string($index)) {
                 if (!is_array($value)) {
-                    throw new Exception('AttributeLimit: Values for ' . var_export($index, true) .
+                    throw new Exception('AttributeLimit: Values for ' . json_encode($index) .
                         ' must be specified in an array.');
                 }
                 $this->allowedAttributes[$index] = $value;
             } else {
-                throw new Exception('AttributeLimit: Invalid option: ' . var_export($index, true));
+                throw new Exception('AttributeLimit: Invalid option: ' . json_encode($index));
             }
         }
+        Logger::debug('AttributeLimit: Allowed attributes at construct: ' . json_encode($this->allowedAttributes));
     }
 
 
@@ -99,17 +101,25 @@ class AttributeLimit extends \SimpleSAML\Auth\ProcessingFilter {
      * @param array &$request  The current request.
      * @return array|NULL  Array with attribute names, or NULL if no limit is placed.
      */
-    private static function getSPIdPAllowed(array &$request)
+    private static function getSPIdPAllowed(array &$state)
     {
 
-        if (array_key_exists('attributes', $request['Destination'])) {
+        Logger::debug('AttributeLimit: state full destination: ' . json_encode($state['Destination']));
+        if (array_key_exists('attributes', $state['Destination'])) {
             // SP Config
-            return $request['Destination']['attributes'];
+            Logger::debug('AttributeLimit: state destination: ' . json_encode($state['Destination']['attributes']));
+            return $state['Destination']['attributes'];
+        } else {
+            Logger::debug('AttributeLimit: state destination: NONE');
         }
-        if (array_key_exists('attributes', $request['Source'])) {
+        if (array_key_exists('attributes', $state['Source'])) {
             // IdP Config
-            return $request['Source']['attributes'];
+            Logger::debug('AttributeLimit: state source: ' . json_encode($state['Source']['attributes']));
+            return $state['Source']['attributes'];
+        } else {
+            Logger::debug('AttributeLimit: state source: NONE');
         }
+        
         return null;
     }
 
@@ -122,7 +132,7 @@ class AttributeLimit extends \SimpleSAML\Auth\ProcessingFilter {
      * @param array &$request  The current request
      * @throws Exception If invalid configuration is found.
      */
-    public function process(&$request)
+    public function process(&$request): void
     {
         assert('is_array($request)');
         assert('array_key_exists("Attributes", $request)');
@@ -142,22 +152,25 @@ class AttributeLimit extends \SimpleSAML\Auth\ProcessingFilter {
         }
 
         $attributes =& $request['Attributes'];
+        Logger::debug('AttributeLimit: Attributes before filter: ' . json_encode($attributes));
 
         if (!empty($this->bilateralSPs) || !empty($this->bilateralAttributes)) {
             $entityid = $request['Destination']['entityid'];
         }
 
-        foreach ($attributes as $name => $values) {
+        foreach (array_keys($attributes) as $name) {
+            Logger::debug('AttributeLimit: check: ' . json_encode($name));
             if (!in_array($name, $allowedAttributes, true)) {
                 // the attribute name is not in the array of allowed attributes
                 if (array_key_exists($name, $allowedAttributes)) {
                     // but it is an index of the array
                     if (!is_array($allowedAttributes[$name])) {
-                        throw new Exception('AttributeLimit: Values for ' . var_export($name, true) .
+                        throw new Exception('AttributeLimit: Values for ' . json_encode($name) .
                             ' must be specified in an array.');
                     }
                     $attributes[$name] = array_intersect($attributes[$name], $allowedAttributes[$name]);
                     if (!empty($attributes[$name])) {
+                        Logger::debug('AttributeLimit: passed ' . $name);
                         continue;
                     }
                 }
@@ -175,9 +188,11 @@ class AttributeLimit extends \SimpleSAML\Auth\ProcessingFilter {
                         continue;
                     }
                 }
+                Logger::debug('AttributeLimit: drop: ' . json_encode($name));
                 unset($attributes[$name]);
             }
         }
 
+        Logger::debug('AttributeLimit: Attributes after filter: ' . json_encode($attributes));
     }
 }
